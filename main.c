@@ -81,7 +81,7 @@ char *timeElapsed() {
 			monthsStr,
 			weeksStr,
 			daysStr,
-			((yrs != 0 || mnths != 0 || wks != 0 || dys != 0)) ? "snd " : "",
+			((yrs != 0 || mnths != 0 || wks != 0 || dys != 0)) ? "and " : "",
 			hoursStr
 	);
 
@@ -128,8 +128,7 @@ void dad() {
 	free(timeElapsed());
 
 	t++;
-	if (t % 60 == 0)
-		sleep(2);
+	sleep(2);
 
 	if (strcmp(storeItems[rand() % (sizeof(storeItems) / sizeof(storeItems[0]))], "milk") == 0) {
 		println("\nDad has found the milk.\n");
