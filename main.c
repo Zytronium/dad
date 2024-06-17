@@ -69,23 +69,19 @@ char *timeElapsed() {
 	}
 
 	if (dys != 0) {
-		sprintf(daysStr, (dys == 1) ? "1 day" : "%d days", dys);
+		sprintf(daysStr, (dys == 1) ? "1 day, " : "%d days, ", dys);
 	} else {
 		daysStr[0] = '\0';
 	}
 
-	if (hrs != 0) {
-		sprintf(hoursStr, (hrs == 1) ? "1 hour" : "%d hours", hrs);
-	} else {
-		hoursStr[0] = '\0';
-	}
+	sprintf(hoursStr, (hrs == 1) ? "1 hour" : "%d hours", hrs);
 
 	sprintf(result, "%s%s%s%s%s%s",
 			yearsStr,
 			monthsStr,
 			weeksStr,
 			daysStr,
-			((yrs == 0 && mnths == 0 && wks == 0 && dys == 0) || hrs == 0) ? "" : ", and ",
+			((yrs != 0 || mnths != 0 || wks != 0 || dys != 0)) ? "snd " : "",
 			hoursStr
 	);
 
@@ -132,7 +128,8 @@ void dad() {
 	free(timeElapsed());
 
 	t++;
-	sleep(2);
+	if (t % 60 == 0)
+		sleep(2);
 
 	if (strcmp(storeItems[rand() % (sizeof(storeItems) / sizeof(storeItems[0]))], "milk") == 0) {
 		println("\nDad has found the milk.\n");
