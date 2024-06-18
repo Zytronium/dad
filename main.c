@@ -16,13 +16,26 @@ void println(const char *msg, ...) {
 	va_end (arg);
 }
 
+int xor(int numConditions, ...) {
+	va_list arg;
+	int n = 0, i;
+
+	va_start(arg, numConditions);
+	for (i = 0; i < numConditions; i++) {
+		if (va_arg(arg, int))
+			n++;
+		if (n > 1)
+			break;
+	}
+	va_end(arg);
+
+	return (n == 1);
+}
+
 char *timeElapsed() {
 	int tm = t;
-	int hrs = 0;
-	int dys = 0;
-	int wks = 0;
-	int mnths = 0;
-	int yrs = 0;
+	int hrs = 0, dys = 0, wks = 0, mnths = 0, yrs = 0;
+	int andPos = 0; /*0 = not used, 1 = after days, 2 = after weeks, 3 = after months, 4 = after years*/
 
 	while (tm > 0) {
 		if (tm >= 8760) {
@@ -43,6 +56,16 @@ char *timeElapsed() {
 		}
 	}
 
+	if (yrs != 0 && xor(4, mnths != 0, wks != 0, dys != 0, hrs != 0)) {
+		andPos = 4;
+	} else if (mnths != 0 && xor(3, wks != 0, dys != 0, hrs != 0)) {
+		andPos = 3;
+	} else if (wks != 0 && xor(2, dys != 0, hrs != 0)) {
+		andPos = 2;
+	} else if (dys != 0 && hrs != 0) {
+		andPos = 1;
+	}
+
 	char* result = malloc(64);
 	char yearsStr[13];
 	char monthsStr[12];
@@ -51,37 +74,44 @@ char *timeElapsed() {
 	char hoursStr[9];
 
 	if (yrs != 0) {
-		sprintf(yearsStr, (yrs == 1) ? "1 year, " : "%d years, ", yrs);
+		sprintf(yearsStr, (yrs == 1) ? "%d year%s" : "%d years%s", yrs, (andPos == 4 || andPos == 0) ? ((hrs == 0 && dys == 0 && wks == 0 && mnths == 0) ? "" : " ") : ", ");
 	} else {
 		yearsStr[0] = '\0';
 	}
 
 	if (mnths != 0) {
-		sprintf(monthsStr, (mnths == 1) ? "1 month, " : "%d months, ", mnths);
+		sprintf(monthsStr, (mnths == 1) ? "%d month%s" : "%d months%s", mnths, (andPos == 4 || andPos == 0 || (andPos == 3 && yrs == 0)) ? ((hrs == 0 && dys == 0 && wks == 0) ? "" : " ") : ", ");
 	} else {
 		monthsStr[0] = '\0';
 	}
 
 	if (wks != 0) {
-		sprintf(weeksStr, (wks == 1) ? "1 week, " : "%d weeks, ", wks);
+		sprintf(weeksStr, (wks == 1) ? "%d week%s" : "%d weeks%s", wks, (andPos >= 3 || andPos == 0 || (andPos == 2 && yrs == 0 && mnths == 0)) ? ((hrs == 0 && dys == 0) ? "" : " ") : ", ");
 	} else {
 		weeksStr[0] = '\0';
 	}
 
 	if (dys != 0) {
-		sprintf(daysStr, (dys == 1) ? "1 day, " : "%d days, ", dys);
+		sprintf(daysStr, (dys == 1) ? "%d day%s" : "%d days%s", dys, (andPos >= 2 || andPos == 0 || (andPos == 1 && yrs == 0 && mnths == 0 && wks == 0)) ? ((hrs == 0) ? "" : " ") : ", ");
 	} else {
 		daysStr[0] = '\0';
 	}
 
-	sprintf(hoursStr, (hrs == 1) ? "1 hour" : "%d hours", hrs);
+	if (hrs != 0) {
+		sprintf(hoursStr, (hrs == 1) ? "1 hour" : "%d hours", hrs);
+	} else {
+		hoursStr[0] = '\0';
+	}
 
-	sprintf(result, "%s%s%s%s%s%s",
+	sprintf(result, "%s%s%s%s%s%s%s%s%s",
 			yearsStr,
+			(andPos == 4) ? "and " : "",
 			monthsStr,
+			(andPos == 3) ? "and " : "",
 			weeksStr,
+			(andPos == 2) ? "and " : "",
 			daysStr,
-			((yrs != 0 || mnths != 0 || wks != 0 || dys != 0)) ? "and " : "",
+			(andPos == 1) ? "and " : "",
 			hoursStr
 	);
 
