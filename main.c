@@ -16,7 +16,7 @@ void println(const char *msg, ...) {
 	va_end (arg);
 }
 
-char *___strupr(char *s) {
+char *strupr_(char *s) {
 	int i;
 	char *newStr = strdup(s);
 
@@ -150,7 +150,7 @@ void returnWithMilk() {
 	sleep(2);
 	printf(" What? DAD!? ");
 	sleep(1);
-	println("IT'S BEEN %s!\"", ___strupr(timeElapsedShort()));
+	println("IT'S BEEN %s!\"", strupr_(timeElapsedShort()));
 	sleep(3);
 	println("\n T H E    E N D ");
 	sleep(12);
