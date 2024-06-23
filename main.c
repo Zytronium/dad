@@ -16,6 +16,17 @@ void println(const char *msg, ...) {
 	va_end (arg);
 }
 
+char *___strupr(char *s) {
+	int i;
+	char *newStr = strdup(s);
+
+	for (i = 0; newStr[i]; i++) {
+		if (newStr[i] >= 'a' && newStr[i] <= 'z')
+			newStr[i] -= 32;
+	}
+	return newStr;
+}
+
 int xor(int numConditions, ...) {
 	va_list arg;
 	int n = 0, i;
@@ -118,8 +129,8 @@ char *timeElapsed() {
 	return result;
 }
 
-char *timeElapsedShort() { /* WIP. Low priority, since it'll never be used. */
-	return "10 YEARS";
+char *timeElapsedShort() { /* WIP. Low priority, since it'll never be used; unless dad actually finds the milk somehow. */
+	return "10 years";
 }
 
 void returnWithMilk() {
@@ -139,7 +150,7 @@ void returnWithMilk() {
 	sleep(2);
 	printf(" What? DAD!? ");
 	sleep(1);
-	println("IT'S BEEN %s! \"", strupr(timeElapsedShort()));
+	println("IT'S BEEN %s!\"", ___strupr(timeElapsedShort()));
 	sleep(3);
 	println("\n T H E    E N D ");
 	sleep(12);
